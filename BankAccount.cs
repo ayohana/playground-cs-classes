@@ -13,13 +13,21 @@ using System.Threading.Tasks;
 //The initial balance must be positive.
 //Withdrawals cannot result in a negative balance.
 
-//There are 7 MEMBERS of the BankAccount class where the first 5 are PROPERTIES and the last 3 are METHODS.
+//There are 10 MEMBERS of the BankAccount class where the first 6 are PROPERTIES and the last 4 are METHODS.
+
+//After building this program, you get requests to add features to it. It works great in the situation where there is only one bank account type. Over time, needs change, and related account types are requested:
+//An interest earning account that accrues interest at the end of each month.
+//A line of credit that can have a negative balance, but when there's a balance, there's an interest charge each month.
+//A pre-paid gift card account that starts with a single deposit, and only can be paid off. It can be refilled once at the start of each month.
+
+//3 new classes created: InterestEarningAccount, LineOfCreditAccount, GiftCardAccount.
+//Each of these classes inherits the shared behavior from their shared base class, the BankAccount class. Write the implementations for new and different functionality in each of the derived classes. These derived classes already have all the behavior defined in the BankAccount class.
 
 namespace classes
 {
     public class BankAccount
     {
-        //Here are the 5 PROPERTIES of the BankAccount class:
+        //Here are the 6 PROPERTIES of the BankAccount class:
         private static int accountNumberSeed = 1234567890;
         public string Number { get; }
         public string Owner { get; }
@@ -36,17 +44,24 @@ namespace classes
             }
         }
         private List<Transaction> allTransactions = new List<Transaction>();
+        private readonly decimal minimumBalance;
 
-        //Here's our constructor:
-        public BankAccount(string name, decimal initialBalance)
+        //Let's use constructor chaining to have one constructor call another. Here are our two constructors:
+        public BankAccount(string name, decimal initialBalance) : this(name, initialBalance, 0)
+        {
+        }
+        public BankAccount(string name, decimal initialBalance, decimal minimumBalance)
         {
             this.Number = accountNumberSeed.ToString();
             accountNumberSeed++;
             this.Owner = name;
-            MakeDeposit(initialBalance, DateTime.Now, "Initial balance");
+            this.minimumBalance = minimumBalance;
+            if (initialBalance > 0)
+                MakeDeposit(initialBalance, DateTime.Now, "Initial balance");
         }
 
-        //Here are the 3 METHODS of the BankAccount class:
+
+        //Here are the 4 METHODS of the BankAccount class:
         public void MakeDeposit(decimal amount, DateTime date, string note)
         {
             if (amount <= 0)
@@ -63,7 +78,7 @@ namespace classes
             {
                 throw new ArgumentOutOfRangeException(nameof(amount), "Amount of withdrawal must be positive.");
             }
-            if (Balance - amount < 0)
+            if (Balance - amount < minimumBalance)
             {
                 throw new InvalidOperationException("Not sufficient funds for this withdrawal.");
             }
@@ -88,5 +103,15 @@ namespace classes
 
             return report.ToString();
         }
+
+        public virtual void PerformMonthEndTransactions()
+        {
+
+        }
+        //The preceding code shows how you use the virtual keyword to declare a method in the base class that a derived class may provide a different implementation for.
+        //A virtual method is a method where any derived class may choose to reimplement.
+        //The derived classes use the override keyword to define the new implementation. 
+        //Typically you refer to this as "overriding the base class implementation".
+        //The virtual keyword specifies that derived classes may override the behavior.
     }
 }
