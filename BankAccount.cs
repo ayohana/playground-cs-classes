@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 //The initial balance must be positive.
 //Withdrawals cannot result in a negative balance.
 
-//There are 7 MEMBERS of the BankAccount class where the first 5 are PROPERTIES and the last 2 are METHODS.
+//There are 7 MEMBERS of the BankAccount class where the first 5 are PROPERTIES and the last 3 are METHODS.
 
 namespace classes
 {
@@ -46,7 +46,7 @@ namespace classes
             MakeDeposit(initialBalance, DateTime.Now, "Initial balance");
         }
 
-        //Here are the two METHODS of the BankAccount class:
+        //Here are the 3 METHODS of the BankAccount class:
         public void MakeDeposit(decimal amount, DateTime date, string note)
         {
             if (amount <= 0)
@@ -72,5 +72,21 @@ namespace classes
         }
 
         //The throw statement throws an exception > Execution of the current block ends and the control transfers to the first matching catch block found in the call stack (refer to Program.cs).
+
+        public string GetAccountHistory()
+        {
+            var report = new StringBuilder();
+
+            decimal balance = 0;
+            report.AppendLine("Here's your account history:");
+            report.AppendLine("Date\t\tAmount\tBalance\tNote");
+            foreach (Transaction transaction in allTransactions)
+            {
+                balance += transaction.Amount;
+                report.AppendLine($"{transaction.Date.ToShortDateString()}\t{transaction.Amount}\t{balance}\t{transaction.Notes}");
+            }
+
+            return report.ToString();
+        }
     }
 }

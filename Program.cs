@@ -27,13 +27,15 @@ namespace classes
             // Test for a negative balance.
             try
             {
-                account.MakeWithdrawal(-750, DateTime.Now, "Attempt to overdraw");
+                account.MakeWithdrawal(750, DateTime.Now, "Attempt to overdraw");
             }
             catch (Exception e)
             {
                 Console.WriteLine("Exception caught trying to overdraw");
                 Console.WriteLine(e.ToString());
             }
+
+            Console.WriteLine(account.GetAccountHistory());
         }
     }
 }
