@@ -13,24 +13,25 @@ using System.Threading.Tasks;
 //The initial balance must be positive.
 //Withdrawals cannot result in a negative balance.
 
-//There are 5 MEMBERS of the BankAccount class where the first 3 are PROPERTIES and the last 2 are METHODS.
+//There are 6 MEMBERS of the BankAccount class where the first 4 are PROPERTIES and the last 2 are METHODS.
 
 namespace classes
 {
     public class BankAccount
     {
-
-        //Here are the three PROPERTIES of the BankAccount class:
+        //Here are the 4 PROPERTIES of the BankAccount class:
+        private static int accountNumberSeed = 1234567890;
         public string Number { get; }
         public string Owner { get; }
-        public decimal Balance { get; }
-        
+        public decimal Balance { get; }        
 
         //Here's our constructor:
         public BankAccount(string name, decimal initialBalance)
         {
             this.Owner = name;
             this.Balance = initialBalance;
+            this.Number = accountNumberSeed.ToString();
+            accountNumberSeed++;
         }
 
         //Here are the two METHODS of the BankAccount class:
