@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 //The initial balance must be positive.
 //Withdrawals cannot result in a negative balance.
 
-//There are 10 MEMBERS of the BankAccount class where the first 6 are PROPERTIES and the last 4 are METHODS.
+//There are 11 MEMBERS of the BankAccount class where the first 6 are PROPERTIES and the last 5 are METHODS.
 
 //After building this program, you get requests to add features to it. It works great in the situation where there is only one bank account type. Over time, needs change, and related account types are requested:
 //An interest earning account that accrues interest at the end of each month.
@@ -61,7 +61,7 @@ namespace classes
         }
 
 
-        //Here are the 4 METHODS of the BankAccount class:
+        //Here are the 5 METHODS of the BankAccount class:
         public void MakeDeposit(decimal amount, DateTime date, string note)
         {
             if (amount <= 0)
@@ -78,12 +78,26 @@ namespace classes
             {
                 throw new ArgumentOutOfRangeException(nameof(amount), "Amount of withdrawal must be positive.");
             }
-            if (Balance - amount < minimumBalance)
-            {
-                throw new InvalidOperationException("Not sufficient funds for this withdrawal.");
-            }
+            var overdraftTransaction = CheckWithdrawalLimit(Balance - amount < minimumBalance);
             Transaction withdrawal = new Transaction(-amount, date, note);
             allTransactions.Add(withdrawal);
+            if (overdraftTransaction != null)
+                allTransactions.Add(overdraftTransaction);
+        }
+
+        //The added method is protected, which means that it can be called only from derived classes. That declaration prevents other clients from calling the method.
+        //It's also virtual so that derived classes can change the behavior.
+        //The return type is a Transaction?. The ? annotation indicates that the method may return null. 
+        protected virtual Transaction? CheckWithdrawalLimit(bool isOverdrawn)
+        {
+            if (isOverdrawn)
+            {
+                throw new InvalidOperationException("Insufficient funds for this withdrawal");
+            }
+            else
+            {
+                return default;
+            }
         }
 
         //The throw statement throws an exception > Execution of the current block ends and the control transfers to the first matching catch block found in the call stack (refer to Program.cs).

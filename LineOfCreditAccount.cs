@@ -26,5 +26,14 @@ namespace classes
                 MakeWithdrawal(interest, DateTime.Now, "Charge monthly interest");
             }
         }
+
+        protected override Transaction? CheckWithdrawalLimit(bool isOverdrawn)
+        {
+            return isOverdrawn
+            ? new Transaction(-20, DateTime.Now, "Apply overdraft fee")
+            : default;
+        }
+        //The override returns a fee transaction when the account is overdrawn.
+        //If the withdrawal doesn't go over the limit, the method returns a null transaction. That indicates there's no fee.
     }
 }
