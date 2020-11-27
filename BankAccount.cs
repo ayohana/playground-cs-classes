@@ -13,36 +13,64 @@ using System.Threading.Tasks;
 //The initial balance must be positive.
 //Withdrawals cannot result in a negative balance.
 
-//There are 6 MEMBERS of the BankAccount class where the first 4 are PROPERTIES and the last 2 are METHODS.
+//There are 7 MEMBERS of the BankAccount class where the first 5 are PROPERTIES and the last 2 are METHODS.
 
 namespace classes
 {
     public class BankAccount
     {
-        //Here are the 4 PROPERTIES of the BankAccount class:
+        //Here are the 5 PROPERTIES of the BankAccount class:
         private static int accountNumberSeed = 1234567890;
         public string Number { get; }
         public string Owner { get; }
-        public decimal Balance { get; }        
+        public decimal Balance 
+        {
+            get
+            {
+                decimal balance = 0;
+                foreach (Transaction transaction in allTransactions)
+                {
+                    balance += transaction.Amount;
+                }
+                return balance;
+            }
+        }
+        private List<Transaction> allTransactions = new List<Transaction>();
 
         //Here's our constructor:
         public BankAccount(string name, decimal initialBalance)
         {
-            this.Owner = name;
-            this.Balance = initialBalance;
             this.Number = accountNumberSeed.ToString();
             accountNumberSeed++;
+            this.Owner = name;
+            MakeDeposit(initialBalance, DateTime.Now, "Initial balance");
         }
 
         //Here are the two METHODS of the BankAccount class:
         public void MakeDeposit(decimal amount, DateTime date, string note)
         {
-
+            if (amount <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(amount), "Amount of deposit must be positive.");
+            }
+            Transaction deposit = new Transaction(amount, date, note);
+            allTransactions.Add(deposit);
         }
 
         public void MakeWithdrawal(decimal amount, DateTime date, string note)
         {
-
+            if (amount <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(amount), "Amount of withdrawal must be positive.");
+            }
+            if (Balance - amount < 0)
+            {
+                throw new InvalidOperationException("Not sufficient funds for this withdrawal.");
+            }
+            Transaction withdrawal = new Transaction(-amount, date, note);
+            allTransactions.Add(withdrawal);
         }
+
+        //The throw statement throws an exception > Execution of the current block ends and the control transfers to the first matching catch block found in the call stack (refer to Program.cs).
     }
 }
